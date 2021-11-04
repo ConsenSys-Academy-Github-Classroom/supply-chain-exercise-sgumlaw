@@ -70,6 +70,7 @@ contract("SupplyChain", function (accounts) {
 
       before(() => {
         subjectStruct = ItemStruct(SupplyChain);
+        
         assert(
           subjectStruct !== null, 
           "The contract should define an `Item Struct`"
@@ -204,14 +205,26 @@ contract("SupplyChain", function (accounts) {
       await instance.addItem(name, price, { from: alice });
       var aliceBalanceBefore = await web3.eth.getBalance(alice);
       var bobBalanceBefore = await web3.eth.getBalance(bob);
-
-      await instance.buyItem(0, { from: bob, value: excessAmount });
+      //console.log("aliceBalanceBefore", aliceBalanceBefore);
+      //console.log("bobBalanceBefore", bobBalanceBefore);
+      
+      await instance.buyItem(0, { from: bob, value: parseInt(excessAmount) });
+      //console.log('Buy Item Function: ')
+      //console.log('Buyer: ', items[0].buyer);
+      //console.log('Buyer: ', items[0].seller);
+      //console.log('Buyer: ', items[0].state);
 
       var aliceBalanceAfter = await web3.eth.getBalance(alice);
       var bobBalanceAfter = await web3.eth.getBalance(bob);
+      //console.log("aliceBalanceAfter", aliceBalanceAfter);
+      //console.log("bobBalanceAfter", bobBalanceAfter);
+      var aliceBalanceAfter2 = new BN(aliceBalanceAfter).toString();
+      var bobBalanceAfter2 = new BN(aliceBalanceBefore).add(new BN(price)).toString();
+      //console.log("aliceBalanceAfter Conversion: ", aliceBalanceAfter2);
+      //console.log("aliceBalanceBefore Conversion: ", bobBalanceAfter2);
 
       const result = await instance.fetchItem.call(0);
-
+      //console.log("Result: ", result[3]);
       assert.equal(
         result[3].toString(10),
         SupplyChain.State.Sold,
